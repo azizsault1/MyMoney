@@ -9,6 +9,7 @@ import controllers.AgenciasJpaController;
 import controllers.ContacorrentesJpaController;
 import controllers.TransacoesJpaController;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -123,14 +124,16 @@ public class MyMoneyService {
      * @return 
      */
     @WebMethod(operationName = "addTransacao")
-    public String addTransacao(Date data,int tipo, double  valor, int idContaCorrenteOrigem, int idContaCorrenteDestino) {
+    public String addTransacao(String data,int tipo, double  valor, int idContaCorrenteOrigem, int idContaCorrenteDestino) {
+        SimpleDateFormat sdf = new SimpleDateFormat("d/MM/yyyy");
+        
         
         Contacorrentes ccOrigem = contaCorrenteController.findContacorrentes(idContaCorrenteOrigem);
         Contacorrentes ccDestino = contaCorrenteController.findContacorrentes(idContaCorrenteDestino);
         
-        Transacoes transacao = new Transacoes(data,tipo, BigDecimal.valueOf(valor), ccOrigem, ccDestino);
         
         try {
+        Transacoes transacao = new Transacoes(sdf.parse(data),tipo, BigDecimal.valueOf(valor), ccOrigem, ccDestino);
             transacoesController.create(transacao);
             return "Transacao criada com sucesso.";
         } catch (Exception ex) {
